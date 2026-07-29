@@ -60,3 +60,22 @@ main{
     color: white;
     text-decoration: none;
 }
+
+.features {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.card {
+    width: 250px;
+    padding: 25px;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+}
