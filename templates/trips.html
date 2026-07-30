@@ -5,10 +5,18 @@ My Trips
 {% endblock %}
 
 {% block content %}
-<h1>My Trips</h1>
+<h1>My Trips ✈️</h1>
 
-<p>
-    You don't have any trips yet.
-</p>
+<form method="POST">
+
+    <label for="destination">Destination:</label>
+    <input type="text" id="destination" name="destination">
+
+    <label for="date">Date:</label>
+    <input type="text" id="date" name="date">
+
+    <button type="submit">Add Trip</button>
+
+</form>
 
 {% endblock %}

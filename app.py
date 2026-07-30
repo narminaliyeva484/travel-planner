@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app=Flask(__name__)
 
@@ -10,8 +10,15 @@ def home():
 def about():
     return render_template("about.html")
 
-@app.route("/trips")
+@app.route("/trips", methods=["GET", "POST"])
 def trips():
+
+    if request.method== "POST":
+        destination= request.form["destination"]
+        date= request.form["date"]
+
+        return f"Trip added: {destination} - {date}"
+    
     return render_template("trips.html")
 
 @app.route("/login")
