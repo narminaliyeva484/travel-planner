@@ -9,13 +9,13 @@
 <body>
 
     <nav>
-        <a href="/">🌍 Travel Planner</a>
+        <a href="{{ url_for('home') }}">🌍 Travel Planner</a>
 
         <div>
-            <a href="/">Home</a>
-            <a href="/trips">My Trips</a>
-            <a href="/about">About</a>
-            <a href="/login">Login</a>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('trips') }}">My Trips</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('login') }}">Login</a>
         </div>
     </nav>
     
