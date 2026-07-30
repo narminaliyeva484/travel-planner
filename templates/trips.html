@@ -19,4 +19,15 @@ My Trips
 
 </form>
 
+<h2>My Trips:</h2>
+{% for trip in trips %}
+
+<div class="trip-card">
+    <h3>{{ trip.destination }}</h3>
+    <p>{{ trip.date }}</p>
+
+</div>
+
+{% endfor %}
+
 {% endblock %}
