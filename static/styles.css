@@ -1,13 +1,21 @@
-body{
-    font-family: Arial, sans-serif;
+body {
+    font-family: "Arial", sans-serif;
     margin: 0;
-}
-
-h1{
+    background-color: #f7f5ef;
     color: #2c3e50;
 }
 
-nav{
+
+/* Headings */
+
+h1 {
+    color: #1f3c5b;
+}
+
+
+/* Navigation */
+
+nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,52 +27,88 @@ nav{
     border-bottom: 1px solid #ddd;
 }
 
-nav div{
+nav div {
     display: flex;
     gap: 25px;
 }
 
-
-nav a{
+nav a {
     text-decoration: none;
     color: #2c3e50;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
-main{
+nav a:hover {
+    color: #3498db;
+}
+
+
+/* Main content */
+
+main {
     padding: 60px;
 }
 
-.hero{
+
+/* Homepage hero */
+
+.hero {
     text-align: center;
-    padding: 100px 20px;
+    padding: 120px 20px;
+
+    background-image: linear-gradient(
+        rgba(0,0,0,0.35),
+        rgba(0,0,0,0.35)
+    ),
+    url("/static/images/travel.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    color: white;
+
+    border-radius: 20px;
 }
 
-.hero h1{
+.hero h1 {
     font-size: 48px;
     margin-bottom: 20px;
+    color: white;
 }
 
-.hero p{
+.hero p {
     font-size: 20px;
-    color: #555;
+    color: white;
     margin-bottom: 30px;
 }
+
+
+/* Buttons */
 
 .button {
     display: inline-block;
     padding: 12px 30px;
     font-size: 18px;
-    border-radius: 8px;
+    border-radius: 25px;
     background-color: #3498db;
     color: white;
     text-decoration: none;
+    transition: transform 0.2s ease;
 }
+
+.button:hover {
+    transform: translateY(-3px);
+}
+
+
+/* Feature section */
 
 .features {
     text-align: center;
     padding: 60px 20px;
 }
+
 
 .cards {
     display: flex;
@@ -73,17 +117,50 @@ main{
     margin-top: 40px;
 }
 
+
 .card {
     width: 250px;
     padding: 25px;
-    border-radius: 12px;
-    background-color: #f8f9fa;
+    border-radius: 15px;
+    background-color: white;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+    transition: transform 0.3s ease;
 }
 
+.card:hover {
+    transform: translateY(-5px);
+}
+
+
+/* Trip cards */
+
 .trip-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
+    border: none;
+    border-radius: 15px;
+
+    padding: 25px;
+
     margin-top: 20px;
+
     max-width: 400px;
+
+    background-color: white;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
+    transition: transform 0.3s ease;
+}
+
+.trip-card:hover {
+    transform: translateY(-5px);
+}
+
+
+/* Page titles */
+
+.page-title {
+    font-weight: bold;
+    letter-spacing: 1px;
 }
