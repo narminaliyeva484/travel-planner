@@ -9,9 +9,15 @@ body {
 /* Headings */
 
 h1 {
-    color: #1f3c5b;
+    color: #2c3e50;
 }
 
+.features h2 {
+    color: #1f3c5b;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
 
 /* Navigation */
 
@@ -20,22 +26,31 @@ nav {
     justify-content: space-between;
     align-items: center;
 
-    padding: 20px 40px;
+    padding: 20px 50px;
 
     background-color: white;
 
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e5e5e5;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.brand {
+    font-size: 24px;
+    font-weight: bold;
+
+    color: #1f3c5b;
 }
 
 nav div {
     display: flex;
-    gap: 25px;
+    gap: 30px;
 }
 
 nav a {
     text-decoration: none;
     color: #2c3e50;
-    font-weight: bold;
+    font-weight: 600;
     transition: color 0.3s ease;
 }
 
@@ -72,15 +87,16 @@ main {
 }
 
 .hero h1 {
-    font-size: 48px;
+    font-size: 56px;
     margin-bottom: 20px;
+    font-weight: 700;
     color: white;
 }
 
 .hero p {
-    font-size: 20px;
+    font-size: 22px;
     color: white;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
 }
 
 
@@ -88,17 +104,28 @@ main {
 
 .button {
     display: inline-block;
-    padding: 12px 30px;
+
+    padding: 16px 45px;
+
     font-size: 18px;
-    border-radius: 25px;
+    font-weight: bold;
+
+    border-radius: 50px;
+
     background-color: #3498db;
     color: white;
+
     text-decoration: none;
-    transition: transform 0.2s ease;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+
+    transition: all 0.3s ease;
 }
 
 .button:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 
@@ -120,17 +147,18 @@ main {
 
 .card {
     width: 250px;
-    padding: 25px;
-    border-radius: 15px;
+    padding: 30px;
+    border-radius: 18px;
     background-color: white;
 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
 
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 
@@ -163,4 +191,103 @@ main {
 .page-title {
     font-weight: bold;
     letter-spacing: 1px;
+}
+
+.form-container {
+
+    max-width: 600px;
+
+    margin: 50px auto;
+
+    padding: 40px;
+
+    background-color: white;
+
+    border-radius: 20px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+
+.form-container h1 {
+
+    text-align: center;
+
+    color: #1f3c5b;
+
+    margin-bottom: 35px;
+}
+
+
+.form-container .button {
+
+    border: none;
+
+    cursor: pointer;
+}
+
+
+.empty-state {
+
+    padding: 50px;
+
+    margin-top: 20px;
+
+    background-color: white;
+
+    border-radius: 20px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+
+    max-width: 500px;
+
+}
+
+
+.empty-state h2 {
+
+    color: #1f3c5b;
+
+    margin-bottom: 15px;
+
+}
+
+
+.empty-state p {
+
+    color: #555;
+
+    font-size: 18px;
+
+}
+
+.form-control {
+    padding: 14px 16px;
+    font-size: 17px;
+    border-radius: 12px;
+}
+
+
+.btn {
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.trip-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cancel-button {
+    margin-left: 10px;
+    border-radius: 30px;
+    padding: 14px 30px;
 }

@@ -1,48 +1,67 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Edit Trip
+Edit Trip
 {% endblock %}
 
 {% block content %}
 
-<h1>Edit Trip</h1>
+<div class="form-container">
 
-<form method = "POST">
-
-    <div class ="mb-3">
-        <label for ="destination" class = "form-label">Destination</label>
-        <input
-            type="text"
-            class="form-control"
-            id="destination"
-            name="destination"
-            value="{{trip['destination']}}"
-            required>
-
-    </div>
-
-    <div class ="mb-3">
-        <label for ="date" class = "form-label">Date</label>
-        <input
-            type="text"
-            class="form-control"
-            id="date"
-            name="date"
-            value="{{trip['date']}}"
-            required>
-
-    </div>
-
-     <button type="submit" class="btn btn-primary">
-        Save Changes
-    </button>
-
-    <a href="{{ url_for('trips_page') }}" class="btn btn-secondary">
-        Cancel
-    </a>
+    <h1>
+        ✏️ Edit Trip
+    </h1>
 
 
-</form>
+    <form method="POST">
+
+        <div class="mb-3">
+
+            <label for="destination" class="form-label">
+                Destination
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                id="destination"
+                name="destination"
+                value="{{ trip['destination'] }}"
+                required>
+
+        </div>
+
+
+        <div class="mb-3">
+
+            <label for="date" class="form-label">
+                Date
+            </label>
+
+            <input
+                type="date"
+                class="form-control"
+                id="date"
+                name="date"
+                value="{{ trip['date'] }}"
+                required>
+
+        </div>
+
+
+        <button type="submit" class="button">
+            💾 Save Changes
+        </button>
+
+
+        <a href="{{ url_for('trips_page') }}"
+           class="btn btn-outline-secondary cancel-button">
+            Cancel
+        </a>
+
+
+    </form>
+
+</div>
 
 {% endblock %}
