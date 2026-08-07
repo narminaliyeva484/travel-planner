@@ -1,27 +1,20 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Login
+    Register
 {% endblock %}
-
 
 {% block content %}
 
 <div class="form-container">
 
     <h1>
-        🔐 Welcome Back
+        🌍 Create Your Account
     </h1>
-
-    <p class="text-center mb-4">
-        Login to manage your adventures.
-    </p>
-
 
     <form method="POST">
 
         <div class="mb-3">
-
             <label for="username" class="form-label">
                 Username
             </label>
@@ -31,14 +24,28 @@ Login
                 class="form-control"
                 id="username"
                 name="username"
-                placeholder="Enter your username"
+                placeholder="Choose a username"
+                required>
+        </div>
+
+        <div class="mb-3">
+
+            <label for="email" class="form-label">
+                Email
+            </label>
+
+            <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
                 required>
 
         </div>
 
 
         <div class="mb-3">
-
             <label for="password" class="form-label">
                 Password
             </label>
@@ -48,23 +55,21 @@ Login
                 class="form-control"
                 id="password"
                 name="password"
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 required>
-
         </div>
 
-
         <button type="submit" class="button">
-            Login
+            Create Account
         </button>
 
         <p class="text-center mt-4">
-            Don't have an account?
-            <a href="{{url_for('register')}}">
-                Register
+            Already have an account?
+            <a href="{{url_for('login')}}">
+                Login
             </a>
         </p>
-        
+
     </form>
 
 </div>

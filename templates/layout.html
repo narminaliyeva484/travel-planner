@@ -15,14 +15,44 @@
 
         <div>
             <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('trips_page') }}">My Trips</a>
             <a href="{{ url_for('about') }}">About</a>
-            <a href="{{ url_for('login') }}">Login</a>
+
+            {% if session.get("user_id") %}
+                <a href="{{ url_for('trips_page') }}">My Trips</a>
+
+                <span>
+                    👋 {{ session.get("username") }}
+                </span>
+                
+                <a href="{{url_for('logout')}}">Logout</a>
+
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+
+                <a href="{{url_for('register')}}">Register</a>
+
+            {% endif %}
         </div>
     </nav>
     
 
     <main>
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="alert alert-warning text-center">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
         {% block content %}{% endblock %}
     </main>
 
