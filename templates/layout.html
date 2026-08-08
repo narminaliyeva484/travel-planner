@@ -20,11 +20,10 @@
             {% if session.get("user_id") %}
                 <a href="{{ url_for('trips_page') }}">My Trips</a>
 
-                <span>
-                    👋 {{ session.get("username") }}
-                </span>
+                <a href="{{ url_for('profile') }}">
+                 Profile
+                </a>
                 
-                <a href="{{url_for('logout')}}">Logout</a>
 
             {% else %}
                 <a href="{{ url_for('login') }}">Login</a>

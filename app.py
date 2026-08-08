@@ -113,7 +113,7 @@ def edit_trip(trip_id):
 def register():
 
     if request.method == "POST":
-        username = request.form["username"]
+        username = request.form["username"].strip().lower()
         email = request.form["email"]
         password = request.form["password"]
 
@@ -147,7 +147,7 @@ def register():
 def login():
 
     if request.method == "POST":
-        username = request.form["username"]
+        username = request.form["username"].strip().lower()
         password = request.form["password"]
 
         db = get_db_connection()
@@ -158,11 +158,10 @@ def login():
 
         db.close()
 
-        if user is None:
-            return "User not found"
-
-        if not check_password_hash(user["password_hash"], password):
-            return "Incorrect password"
+        if user is None or not check_password_hash(user["password_hash"], password):
+            flash("Incorrect username or password.")
+            return redirect(url_for("login"))
+            
 
         session["user_id"]=user["id"]
         session["username"] = user["username"]
@@ -180,6 +179,116 @@ def logout():
     return redirect(url_for("home"))
 
 
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+
+@app.route("/edit-profile",methods =["GET","POST"])
+def edit_profile():
+
+    db=get_db_connection()
+
+    if request.method == "POST":
+
+        username = request.form["username"].strip().lower()
+        email= request.form["email"]
+
+        try:
+
+            db.execute(
+                "UPDATE users SET username = ?, email = ? WHERE id = ?",
+                (username, email, session["user_id"])
+            )
+
+            db.commit()
+
+            session["username"]= username
+
+            db.close()
+
+            return redirect(url_for("profile"))
+
+        except sqlite3.IntegrityError:
+
+            flash("Username or email already exists.")
+
+            db.close()
+
+            return redirect(url_for("edit_profile"))
+
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (session["user_id"],)
+        ).fetchone()
+
+    db.close()
+
+    return render_template("edit_profile.html", user=user) 
+
+
+@app.route("/change-password",methods=["GET","POST"])
+def change_password():
+
+    db = get_db_connection()
+
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (session["user_id"],)
+    ).fetchone()
+
+    if request.method == "POST":
+        current_password = request.form["current_password"]
+        new_password = request.form["new_password"]
+        confirm_password = request.form["confirm_password"]
+
+        if not check_password_hash(user["password_hash"], current_password):
+            db.close()
+            flash("Current password is incorrect.")
+            return redirect(url_for("change_password"))
+
+        if new_password != confirm_password:
+            db.close()
+            flash("New passwords do not match.")
+            return redirect(url_for("change_password"))
+
+        password_hash = generate_password_hash(new_password)
+
+        db.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (password_hash, session["user_id"])
+        )
+
+        db.commit()
+        db.close()
+
+        flash("Your password has been changed successfully.")
+        return redirect(url_for("profile"))
+
+    db.close()
+
+    return render_template("change_password.html")
+
+
+@app.route("/delete-account",methods=["GET","POST"])
+def delete_account():
+
+    db=get_db_connection()
+
+    db.execute(
+        "DELETE FROM trips WHERE user_id = ?",(session["user_id"],)
+    )
+
+    db.execute(
+        "DELETE FROM users WHERE id = ?",
+        (session["user_id"],)
+    )
+
+    db.commit()
+    db.close()
+
+    session.clear()
+
+    return redirect(url_for("home"))
 
 if __name__== "__main__":
     app.run(debug=True)
