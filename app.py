@@ -20,22 +20,46 @@ def home():
 def about():
     return render_template("about.html")
 
+
 @app.route("/trips", methods=["GET", "POST"])
 def trips_page():
 
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-    db= get_db_connection()
+    db = get_db_connection()
 
     trips = db.execute(
         "SELECT * FROM trips WHERE user_id = ?",
         (session["user_id"],)
     ).fetchall()
 
+    trip_data = []
+
+    for trip in trips:
+
+        expenses = db.execute(
+            "SELECT * FROM expenses WHERE trip_id = ?",
+            (trip["id"],)
+        ).fetchall()
+
+        total_spent = sum(expense["amount"] for expense in expenses)
+
+        if trip["budget"] > 0:
+            percentage_spent = (total_spent / trip["budget"]) * 100
+        else:
+            percentage_spent = 0
+
+        trip_data.append({
+            "trip": trip,
+            "expenses": expenses,
+            "total_spent": total_spent,
+            "percentage_spent": percentage_spent
+        })
+
     db.close()
 
-    return render_template("trips.html", trips=trips)
+    return render_template("trips.html", trips=trip_data)
 
 
 @app.route("/add-trip", methods=["GET","POST"])
@@ -48,12 +72,14 @@ def add_trip():
 
         destination = request.form["destination"]
         date = request.form["date"]
+        budget = request.form["budget"]
+        currency = request.form["currency"]
 
         db = get_db_connection()
 
         db.execute(
-            "INSERT INTO trips (destination, date, user_id) VALUES (?, ?, ?)",
-            (destination, date, session["user_id"])
+            "INSERT INTO trips (destination, date, budget, currency, user_id) VALUES (?, ?, ?, ?, ?)",
+            (destination, date, budget, currency, session["user_id"])
         )
 
         db.commit()
@@ -289,6 +315,121 @@ def delete_account():
     session.clear()
 
     return redirect(url_for("home"))
+
+
+
+@app.route("/add-expense/<int:trip_id>", methods=["GET", "POST"])
+def add_expense(trip_id):
+
+    db = get_db_connection()
+
+    trip = db.execute(
+        "SELECT * FROM trips WHERE id = ? AND user_id = ?",
+        (trip_id, session["user_id"])
+    ).fetchone()
+
+    if trip is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    if request.method == "POST":
+
+        amount = request.form["amount"]
+        category = request.form["category"]
+        description = request.form["description"]
+        date = request.form["date"]
+
+        db.execute(
+            """
+            INSERT INTO expenses
+            (trip_id, amount, category, description, date)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (trip_id, amount, category, description, date)
+        )
+
+        db.commit()
+        db.close()
+
+        return redirect(url_for("trips_page"))
+
+    db.close()
+
+    return render_template(
+        "add_expense.html",
+        trip=trip
+    )
+
+
+@app.route("/edit-expense/<int:expense_id>", methods=["GET", "POST"])
+def edit_expense(expense_id):
+
+    db = get_db_connection()
+
+    expense = db.execute(
+        """
+        SELECT expenses.*
+        FROM expenses
+        JOIN trips ON expenses.trip_id = trips.id
+        WHERE expenses.id = ? AND trips.user_id = ?
+        """,
+        (expense_id, session["user_id"])
+    ).fetchone()
+
+    if expense is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    if request.method == "POST":
+
+        amount = request.form["amount"]
+        category = request.form["category"]
+        description = request.form["description"]
+        date = request.form["date"]
+
+        db.execute(
+            """
+            UPDATE expenses
+            SET amount = ?, category = ?, description = ?, date = ?
+            WHERE id = ?
+            """,
+            (amount, category, description, date, expense_id)
+        )
+
+        db.commit()
+        db.close()
+
+        return redirect(url_for("trips_page"))
+
+    db.close()
+
+    return render_template(
+        "edit_expense.html",
+        expense=expense
+    )
+
+
+@app.route("/delete-expense/<int:expense_id>", methods=["POST"])
+def delete_expense(expense_id):
+
+    db = get_db_connection()
+
+    db.execute(
+        """
+        DELETE FROM expenses
+        WHERE id = ?
+        AND trip_id IN (
+            SELECT id FROM trips WHERE user_id = ?
+        )
+        """,
+        (expense_id, session["user_id"])
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("trips_page"))
+
 
 if __name__== "__main__":
     app.run(debug=True)
