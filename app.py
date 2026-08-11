@@ -49,6 +49,14 @@ def trips_page():
         start_date = datetime.strptime(trip["date"], "%Y-%m-%d").date()
         end_date = datetime.strptime(trip["end_date"], "%Y-%m-%d").date()
 
+        formatted_start_date = datetime.strptime(
+            trip["date"], "%Y-%m-%d"
+        ).strftime("%b %d")
+
+        formatted_end_date = datetime.strptime(
+            trip["end_date"], "%Y-%m-%d"
+        ).strftime("%b %d")
+
         remaining_budget = trip["budget"] - total_spent
         today = date.today()
 
@@ -88,7 +96,9 @@ def trips_page():
             "percentage_spent": percentage_spent,
             "daily_allowance": daily_allowance,
             "days_remaining": days_remaining,
-            "remaining_budget": remaining_budget
+            "remaining_budget": remaining_budget,
+            "formatted_start_date": formatted_start_date,
+            "formatted_end_date": formatted_end_date
         })
 
     db.close()
