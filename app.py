@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
+from datetime import datetime, date
 
 
 app=Flask(__name__)
@@ -45,6 +46,36 @@ def trips_page():
 
         total_spent = sum(expense["amount"] for expense in expenses)
 
+        start_date = datetime.strptime(trip["date"], "%Y-%m-%d").date()
+        end_date = datetime.strptime(trip["end_date"], "%Y-%m-%d").date()
+
+        remaining_budget = trip["budget"] - total_spent
+        today = date.today()
+
+
+        if today < start_date:
+            # Trip hasn't started yet
+            days_remaining = (end_date - start_date).days + 1
+            
+
+        elif start_date <= today <= end_date:
+            # Trip is currently happening
+            days_remaining = (end_date - today).days + 1
+            
+
+        else:
+            # Trip has already ended
+            days_remaining = 0
+    
+
+        if days_remaining > 0:
+            daily_allowance = remaining_budget / days_remaining
+        else:
+            daily_allowance = 0
+
+
+
+
         if trip["budget"] > 0:
             percentage_spent = (total_spent / trip["budget"]) * 100
         else:
@@ -54,7 +85,10 @@ def trips_page():
             "trip": trip,
             "expenses": expenses,
             "total_spent": total_spent,
-            "percentage_spent": percentage_spent
+            "percentage_spent": percentage_spent,
+            "daily_allowance": daily_allowance,
+            "days_remaining": days_remaining,
+            "remaining_budget": remaining_budget
         })
 
     db.close()
@@ -72,14 +106,22 @@ def add_trip():
 
         destination = request.form["destination"]
         date = request.form["date"]
+        end_date = request.form["end_date"]
+        start = datetime.strptime(date, "%Y-%m-%d")
+        end = datetime.strptime(end_date, "%Y-%m-%d")
+
+        if end < start:
+            flash("End date cannot be before the start date.")
+            return redirect(url_for("add_trip"))
+        
         budget = request.form["budget"]
         currency = request.form["currency"]
 
         db = get_db_connection()
 
         db.execute(
-            "INSERT INTO trips (destination, date, budget, currency, user_id) VALUES (?, ?, ?, ?, ?)",
-            (destination, date, budget, currency, session["user_id"])
+            "INSERT INTO trips (destination, date, end_date, budget, currency, user_id) VALUES (?, ?, ?, ?, ?, ?)",
+            (destination, date, end_date, budget, currency, session["user_id"])
         )
 
         db.commit()
@@ -120,8 +162,21 @@ def edit_trip(trip_id):
 
         destination= request.form["destination"]
         date= request.form["date"]
+        end_date = request.form["end_date"]
 
-        db.execute("UPDATE trips SET destination = ? , date = ? WHERE id = ? AND user_id = ?", (destination, date, trip_id, session["user_id"]))
+        start = datetime.strptime(date, "%Y-%m-%d")
+        end = datetime.strptime(end_date, "%Y-%m-%d")
+
+        if end < start:
+            flash("End date cannot be before the start date.")
+            db.close()
+            return redirect(url_for("edit_trip", trip_id=trip_id))
+
+        db.execute("""UPDATE trips 
+        SET destination = ?, date = ?, end_date = ? 
+        WHERE id = ? AND user_id = ?
+        """, 
+        (destination, date, end_date, trip_id, session["user_id"]))
 
         db.commit()
         db.close()

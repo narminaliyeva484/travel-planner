@@ -49,7 +49,7 @@ My Trips
                 </h5>
 
                 <p class="card-text">
-                    📅 Travel Date: {{ trip["date"] }}
+                    📅 Travel Date: {{ trip["date"] }} - {{trip["end_date"]}}
                 </p>
 
                 <p class="card-text">
@@ -75,6 +75,40 @@ My Trips
                     </p>
 
                 {% endif %}
+
+
+                {% if item["days_remaining"] > 0 %}
+
+                    <p class="card-text">
+                        📅 Days remaining: {{ item["days_remaining"] }}
+                    </p>
+
+                    {% if item["remaining_budget"] >= 0 %}
+
+                        <p class="card-text">
+                            💡 Daily allowance:
+                            {{ "%.2f"|format(item["daily_allowance"]) }}
+                            {{ trip["currency"] }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="card-text">
+                            💡 Daily allowance:
+                            {{ "%.2f"| format(0) }}
+                            {{ trip["currency"] }}
+                        </p>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <p class="card-text text-muted">
+                        🏁 This trip has ended.
+                    </p>
+
+            {% endif %}
+                
 
                 <div class="mt-3">
                     <div class="d-flex justify-content-between">

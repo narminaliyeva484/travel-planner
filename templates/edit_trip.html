@@ -48,6 +48,20 @@ Edit Trip
 
         </div>
 
+        <div class="mb-3">
+            <label for="end_date" class="form-label">
+                End Date
+            </label>
+
+            <input
+                type="date"
+                class="form-control"
+                id="end_date"
+                name="end_date"
+                value="{{ trip['end_date'] or '' }}"
+                required>
+        </div>
+
 
         <button type="submit" class="button">
             💾 Save Changes
