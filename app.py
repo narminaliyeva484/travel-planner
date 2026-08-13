@@ -173,6 +173,7 @@ def edit_trip(trip_id):
         destination= request.form["destination"]
         date= request.form["date"]
         end_date = request.form["end_date"]
+        budget = request.form["budget"]
 
         start = datetime.strptime(date, "%Y-%m-%d")
         end = datetime.strptime(end_date, "%Y-%m-%d")
@@ -183,10 +184,10 @@ def edit_trip(trip_id):
             return redirect(url_for("edit_trip", trip_id=trip_id))
 
         db.execute("""UPDATE trips 
-        SET destination = ?, date = ?, end_date = ? 
+        SET destination = ?, date = ?, end_date = ?, currency = ?
         WHERE id = ? AND user_id = ?
         """, 
-        (destination, date, end_date, trip_id, session["user_id"]))
+        (destination, date, end_date, budget, trip_id, session["user_id"]))
 
         db.commit()
         db.close()
@@ -250,7 +251,7 @@ def login():
         db.close()
 
         if user is None or not check_password_hash(user["password_hash"], password):
-            flash("Incorrect username or password.")
+            flash("Incorrect username or password.", "login_error")
             return redirect(url_for("login"))
             
 

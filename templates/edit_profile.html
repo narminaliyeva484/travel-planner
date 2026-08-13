@@ -6,52 +6,59 @@ Edit Profile
 
 {% block content %}
 
-<div class="container py-5">
+<div class="form-container">
 
-<h1 class="text-center mb-4">
-    ✏️ Edit Profile
-</h1>
+    <h1>
+        ✏️ Edit Profile
+    </h1>
 
-<form method="POST" class="mx-auto" style="max-width: 600px;">
+    <form method="POST">
 
-    <div class="mb-3">
-        <label for="username" class="form-label">
-            Username
-        </label>
+        <div class="mb-3">
+            <label for="username" class="form-label">
+                Username
+            </label>
 
-        <input
-            type="text"
-            class="form-control"
-            id="username"
-            name="username"
-            value="{{ user['username'] }}"
-            required>
-    </div>
+            <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                value="{{ user['username'] }}"
+                required>
+        </div>
 
-    <div class="mb-3">
-        <label for="email" class="form-label">
-            Email
-        </label>
 
-        <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            value="{{ user['email'] }}"
-            required>
-    </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">
+                Email
+            </label>
 
-    <button type="submit" class="btn btn-primary">
-        Save Changes
-    </button>
+            <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                value="{{ user['email'] }}"
+                required>
+        </div>
 
-    <a href="{{ url_for('profile') }}" class="btn btn-secondary">
-        Cancel
-    </a>
 
-</form>
+        <div class="form-actions">
 
+            <button type="submit" class="button">
+                💾 Save Changes
+            </button>
+
+            <a
+                href="{{ url_for('profile') }}"
+                class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
 
 </div>
 

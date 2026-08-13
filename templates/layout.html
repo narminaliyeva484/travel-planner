@@ -36,19 +36,25 @@
     
 
     <main>
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
 
-            {% if messages %}
+                {% for category, message in messages %}
 
-                {% for message in messages %}
+                    {% if category == "login_error" %}
 
-                    <div class="alert alert-warning text-center">
-                        {{ message }}
-                    </div>
+                        <p class="login-error">
+                            {{ message }}
+                        </p>
+
+                    {% else %}
+
+                        <div class="alert alert-warning text-center">
+                            {{ message }}
+                        </div>
+
+                    {% endif %}
 
                 {% endfor %}
-
-            {% endif %}
 
         {% endwith %}
 

@@ -6,52 +6,84 @@ My Profile
 
 {% block content %}
 
-<div class="container py-5">
+<div class="profile-container">
 
+    <div class="profile-header">
 
-<h1 class="text-center mb-4">
-    👤 My Profile
-</h1>
-
-<div class="card shadow-sm mx-auto" style="max-width: 600px;">
-
-    <div class="card-body text-center">
-
-        <h3 class="card-title mb-4">
-            {{ session["username"] }}
-        </h3>
-
-        <p class="card-text">
-            Welcome to your Travel Planner profile!
-        </p>
-
-        <div class="d-grid gap-2 mt-4">
-
-            <a href="{{ url_for('edit_profile')}}" class="btn btn-primary">
-                ✏️ Edit Profile
-            </a>
-
-            <a href="{{ url_for('change_password')}}" class="btn btn-warning">
-                🔐 Change Password
-            </a>
-
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary">
-                🚪 Log Out
-            </a>
-
+        <div class="profile-avatar">
+            👤
         </div>
 
-        <hr class="my-4">
+        <h1>
+            {{ session["username"] }}
+        </h1>
 
-        <h5 class="text-danger">
-            Danger Zone
-        </h5>
+        <p>
+            Manage your Travel Planner account.
+        </p>
 
-        <form action="{{ url_for('delete_account') }}" method="POST">
+    </div>
 
-            <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Are you sure you want to delete your account? This will permanently delete your account and all your trips.')">
+
+    <div class="profile-actions">
+
+        <a
+            href="{{ url_for('edit_profile') }}"
+            class="profile-action primary">
+            <span>✏️</span>
+
+            <div>
+                <strong>Edit Profile</strong>
+                <small>Update your username or email</small>
+            </div>
+        </a>
+
+
+        <a
+            href="{{ url_for('change_password') }}"
+            class="profile-action">
+            <span>🔐</span>
+
+            <div>
+                <strong>Change Password</strong>
+                <small>Keep your account secure</small>
+            </div>
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="profile-action">
+            <span>🚪</span>
+
+            <div>
+                <strong>Log Out</strong>
+                <small>Sign out of your account</small>
+            </div>
+        </a>
+
+    </div>
+
+
+    <div class="profile-danger">
+
+        <h3>Danger Zone</h3>
+
+        <p>
+            Permanently delete your account and all associated trips.
+        </p>
+
+        <form
+            action="{{ url_for('delete_account') }}"
+            method="POST">
+
+            <button
+                type="submit"
+                class="delete-account-button"
+                onclick="return confirm('Are you sure you want to delete your account? This will permanently delete your account and all your trips.')">
+
                 🗑 Delete Account
+
             </button>
 
         </form>
@@ -59,8 +91,7 @@ My Profile
     </div>
 
 </div>
+      
 
-
-</div>
 
 {% endblock %}

@@ -90,9 +90,17 @@ Add Trip
         </div>
 
         
-        <button type="submit" class="button">
-            Save Trip
-        </button>
+        <div class="form-actions">
+
+            <button type="submit" class="button">
+                Save Trip
+            </button>
+
+            <a href="{{ url_for('trips_page') }}" class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
 
     </form>
 

@@ -6,122 +6,130 @@ Edit Expense
 
 {% block content %}
 
-<div class="container py-5">
+<div class="form-container">
 
-```
-<h1 class="text-center mb-4">
-    ✏️ Edit Expense
-</h1>
+    <h1>
+        ✏️ Edit Expense
+    </h1>
 
-<form method="POST" class="mx-auto" style="max-width: 600px;">
+    <form method="POST">
 
-    <div class="mb-3">
-        <label for="amount" class="form-label">
-            Amount
-        </label>
+        <div class="mb-3">
+            <label for="amount" class="form-label">
+                Amount
+            </label>
 
-        <input
-            type="number"
-            step="0.01"
-            min="0"
-            class="form-control"
-            id="amount"
-            name="amount"
-            value="{{ expense['amount'] }}"
-            required>
-    </div>
+            <input
+                type="number"
+                step="0.01"
+                min="0"
+                class="form-control"
+                id="amount"
+                name="amount"
+                value="{{ expense['amount'] }}"
+                required>
+        </div>
 
-    <div class="mb-3">
-        <label for="category" class="form-label">
-            Category
-        </label>
 
-        <select
-            class="form-select"
-            id="category"
-            name="category"
-            required>
+        <div class="mb-3">
+            <label for="category" class="form-label">
+                Category
+            </label>
 
-            <option value="Flights"
-                {% if expense["category"] == "Flights" %}selected{% endif %}>
-                ✈️ Flights
-            </option>
+            <select
+                class="form-select"
+                id="category"
+                name="category"
+                required>
 
-            <option value="Accommodation"
-                {% if expense["category"] == "Accommodation" %}selected{% endif %}>
-                🏨 Accommodation
-            </option>
+                <option value="Flights"
+                    {% if expense["category"] == "Flights" %}selected{% endif %}>
+                    ✈️ Flights
+                </option>
 
-            <option value="Food"
-                {% if expense["category"] == "Food" %}selected{% endif %}>
-                🍔 Food
-            </option>
+                <option value="Accommodation"
+                    {% if expense["category"] == "Accommodation" %}selected{% endif %}>
+                    🏨 Accommodation
+                </option>
 
-            <option value="Transportation"
-                {% if expense["category"] == "Transportation" %}selected{% endif %}>
-                🚆 Transportation
-            </option>
+                <option value="Food"
+                    {% if expense["category"] == "Food" %}selected{% endif %}>
+                    🍔 Food
+                </option>
 
-            <option value="Activities"
-                {% if expense["category"] == "Activities" %}selected{% endif %}>
-                🎟️ Activities
-            </option>
+                <option value="Transportation"
+                    {% if expense["category"] == "Transportation" %}selected{% endif %}>
+                    🚆 Transportation
+                </option>
 
-            <option value="Shopping"
-                {% if expense["category"] == "Shopping" %}selected{% endif %}>
-                🛍️ Shopping
-            </option>
+                <option value="Activities"
+                    {% if expense["category"] == "Activities" %}selected{% endif %}>
+                    🎟️ Activities
+                </option>
 
-            <option value="Health"
-                {% if expense["category"] == "Health" %}selected{% endif %}>
-                💊 Health
-            </option>
+                <option value="Shopping"
+                    {% if expense["category"] == "Shopping" %}selected{% endif %}>
+                    🛍️ Shopping
+                </option>
 
-            <option value="Other"
-                {% if expense["category"] == "Other" %}selected{% endif %}>
-                📦 Other
-            </option>
+                <option value="Health"
+                    {% if expense["category"] == "Health" %}selected{% endif %}>
+                    💊 Health
+                </option>
 
-        </select>
-    </div>
+                <option value="Other"
+                    {% if expense["category"] == "Other" %}selected{% endif %}>
+                    📦 Other
+                </option>
 
-    <div class="mb-3">
-        <label for="description" class="form-label">
-            Description
-        </label>
+            </select>
+        </div>
 
-        <input
-            type="text"
-            class="form-control"
-            id="description"
-            name="description"
-            value="{{ expense['description'] or '' }}">
-    </div>
 
-    <div class="mb-3">
-        <label for="date" class="form-label">
-            Date
-        </label>
+        <div class="mb-3">
+            <label for="description" class="form-label">
+                Description
+            </label>
 
-        <input
-            type="date"
-            class="form-control"
-            id="date"
-            name="date"
-            value="{{ expense['date'] }}"
-            required>
-    </div>
+            <input
+                type="text"
+                class="form-control"
+                id="description"
+                name="description"
+                value="{{ expense['description'] or '' }}">
+        </div>
 
-    <button type="submit" class="btn btn-primary">
-        Save Changes
-    </button>
 
-    <a href="{{ url_for('trips_page') }}" class="btn btn-secondary">
-        Cancel
-    </a>
+        <div class="mb-3">
+            <label for="date" class="form-label">
+                Date
+            </label>
 
-</form>
-```
+            <input
+                type="date"
+                class="form-control"
+                id="date"
+                name="date"
+                value="{{ expense['date'] }}"
+                required>
+        </div>
+
+
+        <div class="form-actions">
+
+            <button type="submit" class="button">
+                💾 Save Changes
+            </button>
+
+            <a
+                href="{{ url_for('trips_page') }}"
+                class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
 
 </div>
 
