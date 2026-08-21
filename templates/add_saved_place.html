@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Save a Place
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h1>
+        📌 Save a Place
+    </h1>
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label for="name" class="form-label">
+                Place Name
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                placeholder="e.g. Louvre Museum"
+                required>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="location" class="form-label">
+                Location
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                id="location"
+                name="location"
+                placeholder="e.g. Paris, France"
+                required>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="trip_id" class="form-label">
+                Trip
+            </label>
+
+            <select
+                class="form-select"
+                id="trip_id"
+                name="trip_id">
+
+                <option value="">
+                    No trip yet
+                </option>
+
+                {% for trip in trips %}
+
+                    <option
+                        value="{{ trip['id'] }}"
+                        {% if selected_trip_id and selected_trip_id|int == trip['id'] %}
+                            selected
+                        {% endif %}>
+                        {{ trip['destination'] }}
+                        {% if trip['date'] %}
+                            — {{ trip['date'] }}
+                        {% endif %}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <small class="form-help">
+                You can save a place without connecting it to a trip.
+            </small>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="notes" class="form-label">
+                Notes
+            </label>
+
+            <textarea
+                class="form-control"
+                id="notes"
+                name="notes"
+                rows="4"
+                placeholder="Things to see, reservations, ideas..."></textarea>
+        </div>
+
+
+        <div class="form-actions">
+
+            <button type="submit" class="button">
+                📌 Save Place
+            </button>
+
+            <a
+                href="{{ url_for('saved_places') }}"
+                class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

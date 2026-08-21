@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Saved Places
+{% endblock %}
+
+{% block content %}
+
+<div class="trips-page">
+
+    <h1 class="text-center trips-page-title">
+        📌 Saved Places
+    </h1>
+
+    <p class="text-center page-subtitle">
+        Keep track of places you want to visit.
+    </p>
+
+    <div class="text-center mb-5">
+        <a href="{{ url_for('add_saved_place') }}" class="button">
+            ➕ Save a Place
+        </a>
+    </div>
+
+
+    <div class="saved-places-grid">
+
+        {% if places|length == 0 %}
+
+            <div class="empty-state text-center mx-auto">
+
+                <h2>🌍 Your bucket list is empty!</h2>
+
+                <p>
+                    Save places you'd love to visit.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+        {% for place in places %}
+
+            <div class="saved-place-card">
+
+                <div class="saved-place-header">
+
+                    <div>
+                        <h3>
+                            📌 {{ place["name"] }}
+                        </h3>
+
+                        <p>
+                            📍 {{ place["location"] }}
+                        </p>
+                    </div>
+
+                    {% if place["visited"] %}
+                        <span class="visited-badge">
+                            ✅ Visited
+                        </span>
+                    {% else %}
+                        <span class="want-badge">
+                            ✈️ Want to visit
+                        </span>
+                    {% endif %}
+
+                </div>
+
+
+                {% if place["trip_name"] %}
+
+                    <p class="saved-place-trip">
+                        🧳 {{ place["trip_name"] }}
+                    </p>
+
+                {% endif %}
+
+
+                {% if place["notes"] %}
+
+                    <div class="saved-place-notes">
+                        <strong>📝 Notes</strong>
+
+                        <p>
+                            {{ place["notes"] }}
+                        </p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

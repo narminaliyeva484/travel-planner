@@ -17,10 +17,6 @@ def get_db_connection():
 def home():
     return render_template("index.html")
 
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
 
 @app.route("/trips", methods=["GET", "POST"])
 def trips_page():
@@ -496,6 +492,239 @@ def delete_expense(expense_id):
 
     return redirect(url_for("trips_page"))
 
+@app.route("/saved-places")
+def saved_places():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    places = db.execute(
+        """
+        SELECT saved_places.*, trips.destination AS trip_name
+        FROM saved_places
+        LEFT JOIN trips ON saved_places.trip_id = trips.id
+        WHERE saved_places.user_id = ?
+        ORDER BY saved_places.visited ASC, saved_places.id DESC
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    db.close()
+
+    return render_template(
+        "saved_places.html",
+        places=places
+    )
+
+@app.route("/add-saved-place", methods=["GET", "POST"])
+def add_saved_place():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    selected_trip_id = request.args.get("trip_id")
+
+    db = get_db_connection()
+
+    trips = db.execute(
+        """
+        SELECT id, destination, date
+        FROM trips
+        WHERE user_id = ?
+        ORDER BY date
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    if request.method == "POST":
+
+        name = request.form["name"].strip()
+        location = request.form["location"].strip()
+        notes = request.form["notes"].strip()
+        trip_id = request.form["trip_id"]
+
+        if trip_id == "":
+            trip_id = None
+        else:
+            trip = db.execute(
+                """
+                SELECT id
+                FROM trips
+                WHERE id = ? AND user_id = ?
+                """,
+                (trip_id, session["user_id"])
+            ).fetchone()
+
+            if trip is None:
+                db.close()
+                return redirect(url_for("saved_places"))
+
+        db.execute(
+            """
+            INSERT INTO saved_places
+            (user_id, trip_id, name, location, notes)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                session["user_id"],
+                trip_id,
+                name,
+                location,
+                notes
+            )
+        )
+
+        db.commit()
+        db.close()
+
+        return redirect(url_for("saved_places"))
+
+    db.close()
+
+    return render_template(
+        "add_saved_place.html",
+        trips=trips,
+        selected_trip_id=selected_trip_id
+    )
+
+
+@app.route("/trip/<int:trip_id>")
+def trip_details(trip_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    trip = db.execute(
+        """
+        SELECT *
+        FROM trips
+        WHERE id = ? AND user_id = ?
+        """,
+        (trip_id, session["user_id"])
+    ).fetchone()
+
+    if trip is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    expenses = db.execute(
+        """
+        SELECT *
+        FROM expenses
+        WHERE trip_id = ?
+        ORDER BY date DESC, id DESC
+        """,
+        (trip_id,)
+    ).fetchall()
+
+    places = db.execute(
+    """
+    SELECT *
+    FROM saved_places
+    WHERE trip_id = ? AND user_id = ?
+    ORDER BY visited ASC, id DESC
+    """,
+        (trip_id, session["user_id"])
+    ).fetchall()
+
+    total_spent = sum(expense["amount"] for expense in expenses)
+
+    percentage_spent = 0
+
+    if trip["budget"] > 0:
+        percentage_spent = (total_spent / trip["budget"]) * 100
+
+    start_date = datetime.strptime(
+        trip["date"], "%Y-%m-%d"
+    ).date()
+
+    end_date = datetime.strptime(
+        trip["end_date"], "%Y-%m-%d"
+    ).date()
+
+    today = date.today()
+
+    remaining_budget = trip["budget"] - total_spent
+
+    if today < start_date:
+        days_remaining = (end_date - start_date).days + 1
+
+    elif start_date <= today <= end_date:
+        days_remaining = (end_date - today).days + 1
+
+    else:
+        days_remaining = 0
+
+    if days_remaining > 0:
+        daily_allowance = remaining_budget / days_remaining
+    else:
+        daily_allowance = 0
+
+    formatted_start_date = start_date.strftime("%b %d")
+    formatted_end_date = end_date.strftime("%b %d")
+
+    db.close()
+
+    return render_template(
+        "trip_details.html",
+        trip=trip,
+        expenses=expenses,
+        places=places,
+        total_spent=total_spent,
+        percentage_spent=percentage_spent,
+        remaining_budget=remaining_budget,
+        days_remaining=days_remaining,
+        daily_allowance=daily_allowance,
+        start_date=formatted_start_date,
+        end_date=formatted_end_date
+    )
+
+@app.route("/saved-place/<int:place_id>/toggle", methods=["POST"])
+def toggle_saved_place(place_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    place = db.execute(
+        """
+        SELECT *
+        FROM saved_places
+        WHERE id = ? AND user_id = ?
+        """,
+        (place_id, session["user_id"])
+    ).fetchone()
+
+    if place is None:
+        db.close()
+        return redirect(url_for("saved_places"))
+
+    new_status = 0 if place["visited"] else 1
+
+    db.execute(
+        """
+        UPDATE saved_places
+        SET visited = ?
+        WHERE id = ? AND user_id = ?
+        """,
+        (new_status, place_id, session["user_id"])
+    )
+
+    db.commit()
+
+    trip_id = place["trip_id"]
+
+    db.close()
+
+    if trip_id:
+        return redirect(url_for("trip_details", trip_id=trip_id))
+
+    return redirect(url_for("saved_places"))
 
 if __name__== "__main__":
     app.run(debug=True)
