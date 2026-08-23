@@ -726,6 +726,138 @@ def toggle_saved_place(place_id):
 
     return redirect(url_for("saved_places"))
 
+@app.route("/edit-saved-place/<int:place_id>", methods=["GET","POST"])
+def edit_saved_place(place_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db=get_db_connection()
+
+    place = db.execute(
+        """
+        SELECT *
+        FROM saved_places
+        WHERE id = ? AND user_id = ?
+        """,
+        (place_id, session["user_id"])
+    ).fetchone()
+
+    if place is None:
+        db.close()
+        return redirect(url_for("saved_places"))
+
+    trips = db.execute(
+        """
+        SELECT id, destination, date
+        FROM trips
+        WHERE user_id = ?
+        ORDER BY date
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    if request.method == "POST":
+
+        name = request.form["name"].strip()
+        location = request.form["location"].strip()
+        notes = request.form["notes"].strip()
+        trip_id = request.form["trip_id"]
+
+        if trip_id == "":
+            trip_id = None
+        else:
+            trip = db.execute(
+                """
+                SELECT id
+                FROM trips
+                WHERE id = ? AND user_id = ?
+                """,
+                (trip_id, session["user_id"])
+            ).fetchone()
+
+            if trip is None:
+                db.close()
+                return redirect(url_for("saved_places"))
+
+        db.execute(
+            """
+            UPDATE saved_places
+            SET name = ?, location = ?, notes = ?, trip_id = ?
+            WHERE id = ? AND user_id = ?
+            """,
+            (
+                name,
+                location,
+                notes,
+                trip_id,
+                place_id,
+                session["user_id"]
+            )
+        )
+
+        db.commit()
+
+        old_trip_id = place["trip_id"]
+
+        db.close()
+
+        if trip_id:
+            return redirect(url_for("trip_details", trip_id=trip_id))
+
+        if old_trip_id:
+            return redirect(url_for("trip_details", trip_id=old_trip_id))
+
+        return redirect(url_for("saved_places"))
+
+    db.close()
+
+    return render_template(
+        "edit_saved_place.html",
+        place=place,
+        trips=trips
+    )
+
+
+@app.route("/delete-saved-place/<int:place_id>", methods=["POST"])
+def delete_saved_place(place_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    place = db.execute(
+        """
+        SELECT trip_id
+        FROM saved_places
+        WHERE id = ? AND user_id = ?
+        """,
+        (place_id, session["user_id"])
+    ).fetchone()
+
+    if place is None:
+        db.close()
+        return redirect(url_for("saved_places"))
+
+    trip_id = place["trip_id"]
+
+    db.execute(
+        """
+        DELETE FROM saved_places
+        WHERE id = ? AND user_id = ?
+        """,
+        (place_id, session["user_id"])
+    )
+
+    db.commit()
+    db.close()
+
+    if trip_id:
+        return redirect(url_for("trip_details", trip_id=trip_id))
+
+    return redirect(url_for("saved_places"))
+
 if __name__== "__main__":
     app.run(debug=True)
 

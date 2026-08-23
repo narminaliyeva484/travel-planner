@@ -1181,3 +1181,21 @@ nav div a:hover {
     }
 
 }
+
+.place-note-preview {
+    margin: 6px 0 0;
+    color: #777;
+    font-size: 13px;
+    line-height: 1.5;
+    font-style: italic;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.saved-place-notes p {
+    margin: 6px 0 0;
+    color: #666;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
