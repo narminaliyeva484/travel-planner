@@ -413,7 +413,7 @@ def add_expense(trip_id):
         db.commit()
         db.close()
 
-        return redirect(url_for("trips_page"))
+        return redirect(url_for("trip_details", trip_id=trip_id))
 
     db.close()
 
@@ -461,7 +461,7 @@ def edit_expense(expense_id):
         db.commit()
         db.close()
 
-        return redirect(url_for("trips_page"))
+        return redirect(url_for("trip_details",trip_id=expense["trip_id"]))
 
     db.close()
 
@@ -476,21 +476,39 @@ def delete_expense(expense_id):
 
     db = get_db_connection()
 
+    expense = db.execute(
+        """
+        SELECT expenses.trip_id
+        FROM expenses
+        JOIN trips ON expenses.trip_id = trips.id
+        WHERE expenses.id = ? AND trips.user_id = ?
+        """,
+        (expense_id, session["user_id"])
+    ).fetchone()
+
+    if expense is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    trip_id = expense["trip_id"]
+
     db.execute(
         """
         DELETE FROM expenses
         WHERE id = ?
-        AND trip_id IN (
-            SELECT id FROM trips WHERE user_id = ?
-        )
         """,
-        (expense_id, session["user_id"])
+        (expense_id,)
     )
 
     db.commit()
     db.close()
 
-    return redirect(url_for("trips_page"))
+    return redirect(
+        url_for(
+            "trip_details",
+            trip_id=trip_id
+        )
+    )
 
 @app.route("/saved-places")
 def saved_places():
@@ -547,6 +565,7 @@ def add_saved_place():
 
         if trip_id == "":
             trip_id = None
+
         else:
             trip = db.execute(
                 """
@@ -578,6 +597,11 @@ def add_saved_place():
 
         db.commit()
         db.close()
+
+        if trip_id:
+            return redirect(
+                url_for("trip_details", trip_id=trip_id)
+            )
 
         return redirect(url_for("saved_places"))
 

@@ -102,7 +102,11 @@ Save a Place
             </button>
 
             <a
-                href="{{ url_for('saved_places') }}"
+                href="{% if selected_trip_id %}
+                        {{ url_for('trip_details', trip_id=selected_trip_id) }}
+                    {% else %}
+                        {{ url_for('saved_places') }}
+                    {% endif %}"
                 class="cancel-button">
                 Cancel
             </a>
