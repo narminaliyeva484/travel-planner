@@ -978,3 +978,67 @@ nav div a:hover {
         padding: 30px 20px;
     }
 }
+
+/* Checklist */
+
+.checklist-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.checklist-row:last-child {
+    border-bottom: none;
+}
+
+.checklist-row form {
+    margin: 0;
+}
+
+.checklist-toggle {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.checklist-row span {
+    flex: 1;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.checklist-completed {
+    text-decoration: line-through;
+    color: #999 !important;
+}
+
+.checklist-delete {
+    border: none;
+    background: none;
+    padding: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.checklist-delete:hover {
+    opacity: 1;
+}
+
+.checklist-edit {
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.6;
+    flex-shrink: 0;
+    transition: opacity 0.2s ease;
+}
+
+.checklist-edit:hover {
+    opacity: 1;
+}

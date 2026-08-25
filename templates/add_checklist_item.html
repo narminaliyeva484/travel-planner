@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Add Checklist Item
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h1>📋 Add Checklist Item</h1>
+
+    <p class="form-subtitle">
+        Add something you need to do for {{ trip["destination"] }}.
+    </p>
+
+    <form method="POST">
+
+        <div class="mb-3">
+
+            <label for="task" class="form-label">
+                Task
+            </label>
+
+            <input
+                type="text"
+                id="task"
+                name="task"
+                class="form-control"
+                placeholder="e.g. Book hotel"
+                required
+            >
+
+        </div>
+
+        <div class="form-actions">
+
+            <button type="submit" class="button">
+                Add Item
+            </button>
+
+            <a
+                href="{{ url_for('trip_details', trip_id=trip['id']) }}"
+                class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

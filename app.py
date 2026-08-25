@@ -613,6 +613,179 @@ def add_saved_place():
         selected_trip_id=selected_trip_id
     )
 
+@app.route("/add-checklist-item/<int:trip_id>", methods=["GET", "POST"])
+def add_checklist_item(trip_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    trip = db.execute(
+        """
+        SELECT *
+        FROM trips
+        WHERE id = ? AND user_id = ?
+        """,
+        (trip_id, session["user_id"])
+    ).fetchone()
+
+    if trip is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    if request.method == "POST":
+
+        task = request.form["task"].strip()
+
+        db.execute(
+            """
+            INSERT INTO checklist_items
+            (trip_id, task)
+            VALUES (?, ?)
+            """,
+            (trip_id, task)
+        )
+
+        db.commit()
+        db.close()
+
+        return redirect(
+            url_for("trip_details", trip_id=trip_id)
+        )
+
+    db.close()
+
+    return render_template(
+        "add_checklist_item.html",
+        trip=trip
+    )
+
+@app.route("/toggle-checklist-item/<int:item_id>", methods=["POST"])
+def toggle_checklist_item(item_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    item = db.execute(
+        """
+        SELECT checklist_items.*, trips.user_id
+        FROM checklist_items
+        JOIN trips ON checklist_items.trip_id = trips.id
+        WHERE checklist_items.id = ? AND trips.user_id = ?
+        """,
+        (item_id, session["user_id"])
+    ).fetchone()
+
+    if item is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    new_status = 0 if item["completed"] else 1
+
+    db.execute(
+        """
+        UPDATE checklist_items
+        SET completed = ?
+        WHERE id = ?
+        """,
+        (new_status, item_id)
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(
+        url_for("trip_details", trip_id=item["trip_id"])
+    )
+
+@app.route("/delete-checklist-item/<int:item_id>", methods=["POST"])
+def delete_checklist_item(item_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    item = db.execute(
+        """
+        SELECT checklist_items.*, trips.user_id
+        FROM checklist_items
+        JOIN trips ON checklist_items.trip_id = trips.id
+        WHERE checklist_items.id = ? AND trips.user_id = ?
+        """,
+        (item_id, session["user_id"])
+    ).fetchone()
+
+    if item is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    db.execute(
+        """
+        DELETE FROM checklist_items
+        WHERE id = ?
+        """,
+        (item_id,)
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(
+        url_for("trip_details", trip_id=item["trip_id"])
+    )
+
+@app.route("/edit-checklist-item/<int:item_id>", methods=["GET", "POST"])
+def edit_checklist_item(item_id):
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db_connection()
+
+    item = db.execute(
+        """
+        SELECT checklist_items.*, trips.user_id
+        FROM checklist_items
+        JOIN trips ON checklist_items.trip_id = trips.id
+        WHERE checklist_items.id = ? AND trips.user_id = ?
+        """,
+        (item_id, session["user_id"])
+    ).fetchone()
+
+    if item is None:
+        db.close()
+        return redirect(url_for("trips_page"))
+
+    if request.method == "POST":
+
+        task = request.form["task"].strip()
+
+        db.execute(
+            """
+            UPDATE checklist_items
+            SET task = ?
+            WHERE id = ?
+            """,
+            (task, item_id)
+        )
+
+        db.commit()
+        db.close()
+
+        return redirect(
+            url_for("trip_details", trip_id=item["trip_id"])
+        )
+
+    db.close()
+
+    return render_template(
+        "edit_checklist_item.html",
+        item=item
+    )
 
 @app.route("/trip/<int:trip_id>")
 def trip_details(trip_id):
@@ -653,6 +826,16 @@ def trip_details(trip_id):
     ORDER BY visited ASC, id DESC
     """,
         (trip_id, session["user_id"])
+    ).fetchall()
+
+    checklist_items = db.execute(
+        """
+        SELECT *
+        FROM checklist_items
+        WHERE trip_id = ?
+        ORDER BY completed ASC, id DESC
+        """,
+        (trip_id,)
     ).fetchall()
 
     total_spent = sum(expense["amount"] for expense in expenses)
@@ -698,6 +881,7 @@ def trip_details(trip_id):
         trip=trip,
         expenses=expenses,
         places=places,
+        checklist_items=checklist_items,
         total_spent=total_spent,
         percentage_spent=percentage_spent,
         remaining_budget=remaining_budget,

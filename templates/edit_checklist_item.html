@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Edit Checklist Item
+{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h1>✏️ Edit Checklist Item</h1>
+
+    <form method="POST">
+
+        <div class="mb-3">
+
+            <label for="task" class="form-label">
+                Task
+            </label>
+
+            <input
+                type="text"
+                id="task"
+                name="task"
+                class="form-control"
+                value="{{ item['task'] }}"
+                required
+            >
+
+        </div>
+
+        <div class="form-actions">
+
+            <button type="submit" class="button">
+                Save Changes
+            </button>
+
+            <a
+                href="{{ url_for('trip_details', trip_id=item['trip_id']) }}"
+                class="cancel-button">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
