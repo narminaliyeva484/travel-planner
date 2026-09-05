@@ -29,7 +29,7 @@ travel-planner/
 │   └── images/
 ├── templates/
 │   ├── layout.html
-│   ├── home.html
+│   ├── index.html
 │   ├── trips.html
 │   ├── trip_details.html
 │   ├── saved_places.html
